@@ -56,15 +56,9 @@ class Customer {
     return new Customer(customer);
   }
 
-  static async fullName(customer) {
+  fullName() {
 
-    if (customer === undefined) {
-      const err = new Error(`No such customer: ${id}`);
-      err.status = 404;
-      throw err;
-    }
-
-    return `${customer.firstName} ${customer.lastName}`;
+    return `${this.firstName} ${this.lastName}`;
   }
 
 

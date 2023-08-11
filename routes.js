@@ -14,6 +14,10 @@ const router = new express.Router();
 
 router.get("/", async function (req, res, next) {
   const customers = await Customer.all();
+
+  customers.map(customer => customer.fName = customer.fullName());
+  //console.log("full names:", fullNames);
+
   return res.render("customer_list.html", { customers });
 });
 
@@ -40,8 +44,7 @@ router.post("/add/", async function (req, res, next) {
 
 router.get("/:id/", async function (req, res, next) {
   const customer = await Customer.get(req.params.id);
-  const fullName = await Customer.fullName(customer);
-  // console.log(`fullName: `, fullName);
+  const fullName = customer.fullName();
 
   const reservations = await customer.getReservations();
 
@@ -52,8 +55,9 @@ router.get("/:id/", async function (req, res, next) {
 
 router.get("/:id/edit/", async function (req, res, next) {
   const customer = await Customer.get(req.params.id);
+  const fullName = customer.fullName();
 
-  res.render("customer_edit_form.html", { customer });
+  res.render("customer_edit_form.html", { customer, fullName });
 });
 
 /** Handle editing a customer. */
