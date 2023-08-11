@@ -5,6 +5,7 @@
 const db = require("../db");
 const Reservation = require("./reservation");
 
+
 /** Customer of the restaurant. */
 
 class Customer {
@@ -16,7 +17,8 @@ class Customer {
     this.notes = notes;
   }
 
-  /** find all customers. */
+
+  /** Find all customers. */
 
   static async all() {
     const results = await db.query(
@@ -31,7 +33,8 @@ class Customer {
     return results.rows.map(c => new Customer(c));
   }
 
-  /** get a customer by ID. */
+
+  /** Get a customer by ID. */
 
   static async get(id) {
     const results = await db.query(
@@ -60,7 +63,8 @@ class Customer {
     return `${this.firstName} ${this.lastName}`;
   }
 
-  /** get a customer by part of their name */
+
+  /** Get a customer by part of their name. */
 
   static async search(query) {
     const results = await db.query(
@@ -70,21 +74,22 @@ class Customer {
               phone,
               notes
        FROM customers
-       WHERE first_name ILIKE $1
-          OR last_name ILIKE $1`,
+       WHERE CONCAT(first_name, ' ', last_name) ILIKE $1`,
       [`%${query}%`],
     );
 
     return results.rows.map(c => new Customer(c));
   }
 
-  /** get all reservations for this customer. */
+
+  /** Get all reservations for this customer. */
 
   async getReservations() {
     return await Reservation.getReservationsForCustomer(this.id);
   }
 
-  /** save this customer. */
+
+  /** Save this customer. */
 
   async save() {
     if (this.id === undefined) {
@@ -112,6 +117,30 @@ class Customer {
       );
     }
   }
+
+
+  /** Displays 10 customers with the most reservations.*/
+
+  static async topTen() {
+
+    const results = await db.query(
+      `SELECT
+        c.id,
+        c.first_name AS "firstName",
+        c.last_name  AS "lastName",
+        c.phone,
+        c.notes
+      FROM customers as c
+       JOIN reservations as r
+        ON c.id = r.customer_id
+      GROUP BY c.id
+      ORDER BY COUNT(c.id) DESC
+      LIMIT 10`,
+    );
+
+    return results.rows.map(c => new Customer(c));
+  }
+
 }
 
-module.exports = Customer;;
+module.exports = Customer;

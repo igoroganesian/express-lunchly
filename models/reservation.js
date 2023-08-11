@@ -17,12 +17,14 @@ class Reservation {
     this.notes = notes;
   }
 
+
   /** formatter for startAt */
 
   getFormattedStartAt() {
     return moment(this.startAt).format("MMMM Do YYYY, h:mm a");
   }
 
+  
   /** given a customer id, find their reservations. */
 
   static async getReservationsForCustomer(customerId) {
