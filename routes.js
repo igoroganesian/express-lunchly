@@ -13,10 +13,17 @@ const router = new express.Router();
 /** Homepage: show list of customers. */
 
 router.get("/", async function (req, res, next) {
-  const customers = await Customer.all();
+  let customers;
+  console.log(req.query.search);
 
-  customers.map(customer => customer.fName = customer.fullName());
-  //console.log("full names:", fullNames);
+  if (req.query.search) {
+    customers = await Customer.search(req.query.search);
+      // console.log(customers);
+    customers.map(customer => customer.fName = customer.fullName());
+  } else {
+    customers = await Customer.all();
+    customers.map(customer => customer.fName = customer.fullName());
+  }
 
   return res.render("customer_list.html", { customers });
 });
