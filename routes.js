@@ -15,15 +15,14 @@ const router = new express.Router();
 
 router.get("/", async function (req, res, next) {
   let customers;
-  console.log(req.query.search);  //TODO: Back to results
 
-  if (req.query.search) {
-    customers = await Customer.search(req.query.search);
+  const query = req.query.search
+
+  if (query) {
+    customers = await Customer.search(query);
     // console.log(customers);
-    customers.map(customer => customer.fName = customer.fullName()); //TODO: Different variable.  Don't need it.
   } else {
     customers = await Customer.all();
-    customers.map(customer => customer.fName = customer.fullName());
   }
 
   return res.render("customer_list.html", { customers });
@@ -60,7 +59,6 @@ router.get("/top-ten/", async function (req, res, next) {
   const customers = await Customer.topTen();
   console.log("Customers:", customers);
 
-  customers.map(customer => customer.fName = customer.fullName()); //TODO: fix
   console.log("Customers after map:", customers);
 
   return res.render("customer_list.html", { customers });
